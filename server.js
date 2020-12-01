@@ -1,8 +1,14 @@
 const path = require('path');
 const http = require('http');
+
+require('dotenv').config({ path: './config.env'});
+
+const mongoose = require('mongoose');
 const express = require('express');
 const socketio = require('socket.io');
+
 const formatMessage = require('./utils/messages');
+const Msg = require('./Model/messageModel');
 const { userJoin, getCurrentUser, userLeave, getRoomUsers } = require('./utils/users');
 
 const app = express();
@@ -13,6 +19,9 @@ const io = socketio(server);
 app.use(express.static(path.join(__dirname, 'public')));
 
 const botName = 'ChatCord';
+
+const DB = process.env.DB.replace('<password>', process.env.DB_PASSWORD);
+const connect = mongoose.connect(DB, { useNewUrlParser: true , useUnifiedTopology: true });
 
 // Run when a client connect
 io.on('connection', socket => {
@@ -28,7 +37,7 @@ io.on('connection', socket => {
     socket.emit('message', formatMessage(botName, 'Welcome to ChatCord'));
 
     // Broadcast when a user connect
-    socket.broadcast.to(user.room).emit('message', formatMessage(botName, `${user.username} has joined the chat`));
+    socket.broadcast.to(user.room).emit('message', formatMessage(`${user.username} just joined the chat`));
 
     // Send users and room info
     io.to(user.room).emit('roomUsers', { 
@@ -38,9 +47,17 @@ io.on('connection', socket => {
   })
 
   // Listen for chat message
+
   socket.on('chatMessage', msg => {
     const user = getCurrentUser(socket.id);
-    io.to(user.room).emit('message', formatMessage(user.username, msg));
+    const formatMsg = formatMessage(user.username, msg);
+    io.to(user.room).emit('message', formatMsg);
+
+    // Save messages to DATABASE
+    connect.then(async (db) => {
+      console.log('Conneected to DB');
+      await Msg.create({ username: formatMsg.username, text: formatMsg.text, time: formatMsg.time});
+    })
   })
 
   // Runs when client disconnects
