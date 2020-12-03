@@ -25,8 +25,9 @@ const connect = mongoose.connect(DB, { useNewUrlParser: true , useUnifiedTopolog
 
 // Run when a client connect
 io.on('connection', socket => {
+  console.log('in app')
 
-  socket.on('joinRoom', ({ username, room }) => {
+  socket.on('joinRoom', async({ username, room }) => {
 
     const user = userJoin(socket.id, username, room);
 
@@ -37,13 +38,19 @@ io.on('connection', socket => {
     socket.emit('message', formatMessage(botName, 'Welcome to ChatCord'));
 
     // Broadcast when a user connect
-    socket.broadcast.to(user.room).emit('message', formatMessage(`${user.username} just joined the chat`));
+    socket.broadcast.to(user.room).emit('message', formatMessage(botName, `${user.username} just joined the chat`));
 
     // Send users and room info
     io.to(user.room).emit('roomUsers', { 
       room: user.room,
       users: getRoomUsers(user.room)
     })
+
+    // Retrieve messages from the database
+    const messages = await Msg.find({ room: user.room}).limit(10);
+    messages.forEach(el => {
+      socket.emit('message', el);
+    });
   })
 
   // Listen for chat message
@@ -51,12 +58,13 @@ io.on('connection', socket => {
   socket.on('chatMessage', msg => {
     const user = getCurrentUser(socket.id);
     const formatMsg = formatMessage(user.username, msg);
-    io.to(user.room).emit('message', formatMsg);
+    const id = socket.id;
+    io.to(user.room).emit('message', formatMsg, id);
 
     // Save messages to DATABASE
     connect.then(async (db) => {
-      console.log('Conneected to DB');
-      await Msg.create({ username: formatMsg.username, text: formatMsg.text, time: formatMsg.time});
+      // console.log('Conneected to DB');
+      await Msg.create({ username: formatMsg.username, text: formatMsg.text, time: formatMsg.time, room: user.room});
     })
   })
 
@@ -66,13 +74,13 @@ io.on('connection', socket => {
 
     if(user) {
       io.to(user.room).emit('message', formatMessage(botName, `${user.username} has left the chat`));
+      // Send users and room info
+      io.to(user.room).emit('roomUsers', { 
+        room: user.room,
+        users: getRoomUsers(user.room)
+      })
     }
 
-    // Send users and room info
-    io.to(user.room).emit('roomUsers', { 
-      room: user.room,
-      users: getRoomUsers(user.room)
-    })
   })
 })
 

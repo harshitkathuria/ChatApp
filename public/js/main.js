@@ -18,9 +18,16 @@ socket.on('roomUsers', ({ room, users }) => {
 })
 
 // Message from server
-socket.on('message', message => {
+socket.on('message', (message, id = null) => {
+
+  if(id && socket.id == id) {
+    outputMessage(message, true);
+  }
+  else {
+    outputMessage(message);
+  }
+
   console.log(message);
-  outputMessage(message);
 
   // Scroll down
   chatMessages.scrollTop = chatMessages.scrollHeight;
@@ -42,16 +49,19 @@ chatForm.addEventListener('submit', e => {
 })
 
 // Output message to DOM
-function outputMessage(message) {
+function outputMessage(message, right = false) {
   const div = document.createElement('div');
   div.classList.add('message');
+  if(right) {
+    div.style.textAlign = 'right';
+    message.username = 'You';
+  }
+
   div.innerHTML = 
-  `<div class="message">
-    <p class="meta">${message.username} <span>${message.time}</span></p>
+  `<p class="meta">${message.username} <span>${message.time}</span></p>
     <p class="text">
       ${message.text}
-    </p>
-  </div>`
+    </p>`
   document.querySelector('.chat-messages').appendChild(div);
 }
 
