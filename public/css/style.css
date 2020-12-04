@@ -179,6 +179,14 @@ a {
 	width: 100%;
 }
 
+/* User-typing */
+#user-typing {
+	margin-top: 0.3rem;
+	margin-bottom: -0.3rem; 
+	font-style: italic; 
+	color: #3E2723;
+}
+
 @media (max-width: 700px) {
 	.chat-main {
 		display: block;
