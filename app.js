@@ -9,7 +9,8 @@ function createWindow () {
   mainWindow = new BrowserWindow({
     width: 1000, height: 800,
     webPreferences: { nodeIntegration: true },
-    show: false
+    show: false,
+    autoHideMenuBar: true
   })
 
   mainWindow.maximize();
