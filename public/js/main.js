@@ -1,4 +1,5 @@
 const chatForm = document.getElementById('chat-form');
+const chatInput = document.getElementById('msg');
 const chatMessages = document.querySelector('.chat-messages');
 const roomName = document.getElementById('room-name');
 const userList = document.getElementById('users');
@@ -27,10 +28,49 @@ socket.on('message', (message, id = null) => {
     outputMessage(message);
   }
 
-  console.log(message);
-
   // Scroll down
   chatMessages.scrollTop = chatMessages.scrollHeight;
+})
+
+// `User is Typing` feature
+let typing = false;
+let timeout = undefined;
+
+function typingTimeout(){
+  typing = false;
+  socket.emit('not-typing', '');
+}
+
+function onKeyDown(){
+  if(typing === false) {
+    typing = true
+    socket.emit('typing', '');
+    timeout = setTimeout(typingTimeout, 100000);
+  } else {
+    clearTimeout(timeout);
+    timeout = setTimeout(typingTimeout, 100000);
+  }
+}
+
+chatInput.addEventListener('keypress', e => {
+  if(e.key !== 'Enter') {
+    onKeyDown();
+  }
+  else {
+    typingTimeout();
+    clearTimeout(timeout);
+  }
+})
+
+socket.on('user-typing', msg => {
+  const div = document.createElement('div');
+  div.id = 'user-typing';
+  div.innerText = msg;
+  chatMessages.appendChild(div);
+})
+
+socket.on('user-not-typing', msg => {
+  document.getElementById('user-typing').remove();
 })
 
 // Message submit
@@ -72,6 +112,6 @@ function outputRoomName(room) {
 
 // Add users to DOM
 function outputRoomUsers(users) {
-  console.log(users);
+  // console.log(users);
   userList.innerHTML = `${users.map(user => `<li>${user.username}</li>`).join('')}`;
 }

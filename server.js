@@ -68,6 +68,17 @@ io.on('connection', socket => {
     })
   })
 
+  // `User is typing` feature
+  socket.on('typing', msg => {
+    const user = getCurrentUser(socket.id);
+    socket.broadcast.to(user.room).emit('user-typing', `${user.username} is typing...`);
+  })
+
+  socket.on('not-typing', msg => {
+    const user = getCurrentUser(socket.id);
+    socket.broadcast.to(user.room).emit('user-not-typing', '');
+  })
+
   // Runs when client disconnects
   socket.on('disconnect', () => {
     const user = userLeave(socket.id);
