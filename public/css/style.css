@@ -30,14 +30,6 @@ a {
 	text-decoration: none;
 }
 
-.btn {
-	cursor: pointer;
-	padding: 5px 15px;
-	background: var(--light-color);
-	color: var(--dark-color-a);
-	border: 0;
-	font-size: 17px;
-}
 
 /* Chat Page */
 
@@ -195,4 +187,18 @@ a {
 	.chat-sidebar {
 		display: none;
 	}
+}
+
+html, body {
+	font-family: 'Roboto', 'sans-serif';
+}
+.input-field {
+	margin-bottom: 30px;
+}
+.card {
+	margin-top: 70px;
+}
+
+.card input {
+	color: white;
 }
