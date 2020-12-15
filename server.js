@@ -18,7 +18,7 @@ const io = socketio(server);
 // Set static folder
 app.use(express.static(path.join(__dirname, 'public')));
 
-const botName = 'ChatCord';
+const botName = 'Talky';
 
 const DB = process.env.DB.replace('<password>', process.env.DB_PASSWORD);
 const connect = mongoose.connect(DB, { useNewUrlParser: true , useUnifiedTopology: true });
@@ -35,7 +35,7 @@ io.on('connection', socket => {
     socket.join(user.room);
 
     // Welcome current user 
-    socket.emit('message', formatMessage(botName, 'Welcome to ChatCord'));
+    socket.emit('message', formatMessage(botName, 'You just joined ChatOut'));
 
     // Broadcast when a user connect
     socket.broadcast.to(user.room).emit('message', formatMessage(botName, `${user.username} just joined the chat`));
