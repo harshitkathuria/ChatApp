@@ -51,13 +51,40 @@
         </div>
       </div>
     </div>
+
+    <!-- Peloader -->
+    <div class="preloader-wrapper big active loader">
+      <div class="spinner-layer spinner-blue-only">
+        <div class="circle-clipper left">
+          <div class="circle"></div>
+        </div><div class="gap-patch">
+          <div class="circle"></div>
+        </div><div class="circle-clipper right">
+          <div class="circle"></div>
+        </div>
+      </div>
+    </div>
+
   </body>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>	
 
   <script>
+    const loader = document.querySelector('.loader');
+    loader.style.display = 'none';
+
     document.addEventListener('DOMContentLoaded', function() {
       const elems = document.querySelectorAll('select');
       const instances = M.FormSelect.init(elems);
+
+      document.querySelector('.form').addEventListener('submit', e => {
+        e.preventDefault();
+        document.querySelector('.card').style.display = 'none';
+        loader.style.display = 'block';
+        setTimeout(() => {
+          loader.style.display = 'none';
+          document.querySelector('.form').submit();
+        }, 2500);
+      })
     });
   </script>
 </html>

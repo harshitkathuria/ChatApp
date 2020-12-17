@@ -22,6 +22,12 @@ html, body {
 	overflow: hidden;
 }
 
+.loader {
+  position: absolute;
+  top: 50%;
+  left: 47%;
+}
+
 nav {
 	height: 75px;
 }
