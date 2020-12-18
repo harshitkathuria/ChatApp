@@ -16,7 +16,7 @@ function createWindow () {
   mainWindow.maximize();
   mainWindow.show();
 
-  mainWindow.loadURL('http://localhost:3000')
+  mainWindow.loadURL('https://chatout-live.herokuapp.com/')
 
   // mainWindow.webContents.openDevTools();
 

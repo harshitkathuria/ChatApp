@@ -1,7 +1,9 @@
 const path = require('path');
 const http = require('http');
+const dotenv = require('dotenv');
+const compression = require('compression');
 
-require('dotenv').config({ path: './config.env'});
+dotenv.config({ path: './config.env'});
 
 const mongoose = require('mongoose');
 const express = require('express');
@@ -16,6 +18,8 @@ const server = http.createServer(app);
 const io = socketio(server);
 
 // Set static folder
+app.use(compression());
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 const botName = 'Talky';
@@ -47,7 +51,7 @@ io.on('connection', socket => {
     })
 
     // Retrieve messages from the database
-    const messages = await Msg.find({ room: user.room}).limit(10);
+    const messages = await Msg.find({ room: user.room});
     messages.forEach(el => {
       socket.emit('message', el);
     });
@@ -95,6 +99,6 @@ io.on('connection', socket => {
   })
 })
 
-const port = 3000 || process.env.port;
+const port = process.env.PORT || 3000;
 
-server.listen(port, () => { console.log(`Server running on port ${port}`) })
+server.listen(port, '0.0.0.0', () => { console.log(`Server running on port ${port}`) })
