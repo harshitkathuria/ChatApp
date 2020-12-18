@@ -18,3 +18,5 @@ A real time chat application built using [socket.io](https://socket.io), mongoDB
 `npm install` to install all the dependencies.
 
 `npm run start:electron` to run the application.
+
+The initial design idea was inspired from Brad Traversy's ChatCord Application.
