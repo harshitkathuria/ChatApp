@@ -3,6 +3,7 @@ A real time chat application built using [socket.io](https://socket.io), mongoDB
 
 * Enter your username and select the room and you are ready to chat.
 * Previous chats can also be seen.
+* Chats are encrypted.
 * __`User(username) is typing`__ feature is also added. 
 * All users in the group that are online are notified when a new user enter or leave the group chat/
 
