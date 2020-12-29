@@ -45,10 +45,10 @@ function onKeyDown(){
   if(typing === false) {
     typing = true
     socket.emit('typing', '');
-    timeout = setTimeout(typingTimeout, 100000);
+    timeout = setTimeout(typingTimeout, 2000);
   } else {
     clearTimeout(timeout);
-    timeout = setTimeout(typingTimeout, 100000);
+    timeout = setTimeout(typingTimeout, 2000);
   }
 }
 
